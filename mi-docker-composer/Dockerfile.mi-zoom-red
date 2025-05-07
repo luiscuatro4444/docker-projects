@@ -1,0 +1,16 @@
+FROM local/c7-systemd-httpd 
+RUN yum clean all && yum -y update
+RUN yum install -y http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+RUN yum install -y yum-utils
+RUN yum install -y php56
+RUN yum install -y httpd ca-certificates curl apt-transport-https gnupg2 git
+RUN yum install -y php56-php-pecl-apcu php56-php-gd php56-php-mbstring php56-php-mcrypt php56-php-pecl-memcache php56-php-pecl-memcached php56-php-pecl-mongo php56-php-pgsql php56-php-mysqlnd php56-php-pecl-sqlite php56-php-pecl-ssh2 
+COPY  /webpage-code/proveedores /var/www/html/proveedores
+RUN chown apache:apache -R /var/www/html
+COPY apache-configuration/qa-mi.zoom.red.conf /etc/httpd/conf.d/
+WORKDIR /etc/pki/tls/certs/
+COPY zoomred/ /etc/pki/tls/certs/
+RUN yum install -y mod_ssl php56-mod_php
+RUN systemctl enable httpd.service
+EXPOSE 80 443
+CMD ["/usr/sbin/apachectl", "-D", "FOREGROUND"]

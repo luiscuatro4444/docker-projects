@@ -1,0 +1,11 @@
+name: mi.zoom.red
+
+services:
+  mi:
+    build:
+      context: .
+      dockerfile: Dockerfile.mi-zoom-red
+    ports:
+      - "8081:80"
+      - "8082:443"
+    network_mode: "host"
